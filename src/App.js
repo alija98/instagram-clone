@@ -33,7 +33,6 @@ function App() {
   const classes = useStyles();
   const [modalStyle] = React.useState(getModalStyle);
   const [posts, setPosts] = useState([]);
-  const [open, setOpen] = useState(false);
   const [openSignIn, setOpenSignIn] = useState(false);
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
@@ -77,7 +76,7 @@ function App() {
       .signInWithEmailAndPassword(email, password)
       .catch((error) => alert(error.message));
 
-    setOpen(false);
+    setOpenSignIn(false);
   };
 
   const handleRegister = (e) => {
@@ -155,31 +154,39 @@ function App() {
         </div>
       </Modal>
 
-      {user ? (
-        <Button onClick={() => auth.signOut()}>Log out</Button>
-      ) : (
-        <form className="app__loginHome">
-          <Button onClick={() => setOpenSignIn(true)}>Login</Button>
-          <Button onClick={() => setRegisterOpen(true)}>Sign Up</Button>
-        </form>
-      )}
-
       <div className="app__header">
         <img
           className="app__headerImage"
           alt="logo"
-          src="https://assets.turbologo.com/blog/en/2019/09/19084953/instagram-logo-illustration.png"
+          src="https://www.instagram.com/static/images/web/mobile_nav_type_logo.png/735145cfe0a4.png"
         ></img>
+        {user ? (
+          <Button onClick={() => auth.signOut()}>Log out</Button>
+        ) : (
+          <form className="app__loginHome">
+            <Button onClick={() => setOpenSignIn(true)}>Login</Button>
+            <Button onClick={() => setRegisterOpen(true)}>Sign Up</Button>
+          </form>
+        )}
+      </div>
+      <div className="app__posts">
+        {posts.map(({ id, post }) => (
+          <Post
+            key={id}
+            postId={id}
+            username={post.username}
+            caption={post.caption}
+            imageUrl={post.imageUrl}
+            user={user}
+          />
+        ))}
       </div>
 
-      {posts.map(({ id, post }) => (
-        <Post
-          key={id}
-          username={post.username}
-          caption={post.caption}
-          imageUrl={post.imageUrl}
-        />
-      ))}
+      {user?.displayName ? (
+        <ImageUpload username={user.displayName}></ImageUpload>
+      ) : (
+        <h3>You need to login to upload picture</h3>
+      )}
     </div>
   );
 }
